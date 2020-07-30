@@ -1,0 +1,734 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"enan",
+				"enanos_extra\tint enanos_extra"
+			],
+			[
+				"ruta",
+				"ruta_grabacion\tchar [200] ruta_grabacion"
+			],
+			[
+				"le",
+				"leer_config_archivo"
+			],
+			[
+				"re",
+				"resistencia_torre_2"
+			],
+			[
+				"ena",
+				"enanos_inicio\tint [4] enanos_inicio"
+			],
+			[
+				"MAX",
+				"MAX_RUTA\tMAX_RUTA"
+			],
+			[
+				"MA",
+				"MAX_NIVEL\tMAX_NIVEL"
+			],
+			[
+				"CRI",
+				"critico_enanos\tint critico_enanos"
+			],
+			[
+				"FALL",
+				"fallo_enanos\tint fallo_enanos"
+			],
+			[
+				"elf",
+				"elfos_extra\tint elfos_extra"
+			],
+			[
+				"ex",
+				"enanos_extra\tint enanos_extra"
+			],
+			[
+				"en",
+				"enanos_inicio\tint [4] enanos_inicio"
+			],
+			[
+				"arc",
+				"archivo_config\tFILE * archivo_config"
+			],
+			[
+				"arg",
+				"argv\tconst char ** argv"
+			],
+			[
+				"archi",
+				"archivo_config\tFILE * archivo_config"
+			],
+			[
+				"rut",
+				"ruta_caminos\tchar [200] ruta_caminos"
+			],
+			[
+				"fall",
+				"fallo_elfos\tint fallo_elfos"
+			],
+			[
+				"fa",
+				"fallo_enanos\tint fallo_enanos"
+			],
+			[
+				"crit",
+				"critico_elfos\tint critico_elfos"
+			],
+			[
+				"cri",
+				"critico_enanos\tint critico_enanos"
+			],
+			[
+				"costo",
+				"costo_torre_2_elfo\tint costo_torre_2_elfo"
+			],
+			[
+				"cos",
+				"costo_torre_1_enano\tint costo_torre_1_enano"
+			],
+			[
+				"obte",
+				"obtener_valor_config_opcional\tvoid obtener_valor_config_opcional(int *valor)"
+			],
+			[
+				"conf",
+				"config\tconfiguracion_t config"
+			],
+			[
+				"cami",
+				"caminos"
+			],
+			[
+				"caminos",
+				"caminos_t\tcaminos_t"
+			],
+			[
+				"confi",
+				"configuracion_t\tconfiguracion_t"
+			],
+			[
+				"cong",
+				"configuracion_t\tconfiguracion_t"
+			],
+			[
+				"danio",
+				"danio_a_torre_enano\tint danio_a_torre_enano"
+			],
+			[
+				"con",
+				"configuracion\tconfiguracion_t configuracion"
+			],
+			[
+				"dani",
+				"danio_a_torre_elfo\tint danio_a_torre_elfo"
+			],
+			[
+				"dan",
+				"danio_a_torre_enano\tint danio_a_torre_enano"
+			],
+			[
+				"DAN",
+				"DANIO_A_TORRE_POR_ELFO\tDANIO_A_TORRE_POR_ELFO"
+			],
+			[
+				"elfo",
+				"elfos_inicio\tint [4] elfos_inicio"
+			],
+			[
+				"enano",
+				"enanos_inicio\tint [4] enanos_inicio"
+			],
+			[
+				"NIVE",
+				"NIVEL_1\tNIVEL_1"
+			],
+			[
+				"cre",
+				"crear_configuracion\tvoid crear_configuracion(int argc, const char **argv)"
+			],
+			[
+				"ar",
+				"archivo\tFILE * archivo"
+			],
+			[
+				"juego",
+				"juego_t\tjuego_t"
+			],
+			[
+				"archivo",
+				"archivo_grabacion\tFILE * archivo_grabacion"
+			],
+			[
+				"nive",
+				"NIVEL_4"
+			],
+			[
+				"cost",
+				"costo_torre_enano\tint costo_torre_enano"
+			],
+			[
+				"mem",
+				"memcpy\tvoid * memcpy(void *restrict __dest, const void *restrict __src, size_t __n)"
+			],
+			[
+				"el",
+				"elfos_inicio\tint [4] elfos_inicio"
+			],
+			[
+				"most",
+				"mostrar_juego\tvoid mostrar_juego(juego_t juego)"
+			],
+			[
+				"resiste",
+				"resistencia_torre_1"
+			],
+			[
+				"defe",
+				"defendiendo_torres.h\t/home/luciano/Desktop/algo1/tp3"
+			],
+			[
+				"SIN",
+				"SIN_CONFIG_ERROR\tSIN_CONFIG_ERROR"
+			],
+			[
+				"archiv",
+				"archivo_config"
+			],
+			[
+				"camino",
+				"caminos_t\tcaminos_t"
+			],
+			[
+				"MAX_CA",
+				"MAX_LONGITUD_CAMINO\tMAX_LONGITUD_CAMINO"
+			],
+			[
+				"crear",
+				"crear_configuracion"
+			],
+			[
+				"RAN",
+				"RANKING_DEFAULT\tRANKING_DEFAULT"
+			],
+			[
+				"car",
+				"cargar_archivo\tvoid cargar_archivo(FILE *archivo, const char *ruta, char *modo, char *ruta_default, char *mensaje_error)"
+			],
+			[
+				"ARCHI",
+				"archivo_ranking\tFILE * archivo_ranking"
+			],
+			[
+				"CAR",
+				"cargar_archivo\tvoid cargar_archivo(FILE *archivo, const char *ruta, char *modo, char *ruta_default, char *mensaje_error)"
+			],
+			[
+				"SIN_RANKING_",
+				"SIN_RANKING_ERROR"
+			],
+			[
+				"S",
+				"SUCCESS\tSUCCESS"
+			],
+			[
+				"sin",
+				"SIN_RANKING"
+			],
+			[
+				"arch",
+				"archivo_ranking"
+			],
+			[
+				"RA",
+				"RANKING_DEFAULT\tRANKING_DEFAULT"
+			],
+			[
+				"can",
+				"cantidad\tchar [100] cantidad"
+			],
+			[
+				"size",
+				"size_t\tsize_t"
+			],
+			[
+				"canti",
+				"cantidad_mostrados\tint cantidad_mostrados"
+			],
+			[
+				"ca",
+				"cantidad\tchar [100] cantidad"
+			],
+			[
+				"co",
+				"config_t"
+			],
+			[
+				"inc",
+				"inc\t#include \"â€¦\""
+			],
+			[
+				"cant",
+				"cantidad_empates"
+			],
+			[
+				"de",
+				"derrotados_legolas\tint64_t derrotados_legolas"
+			],
+			[
+				"der",
+				"derrotados_legolas"
+			],
+			[
+				"int",
+				"int8_t\tint8_t"
+			],
+			[
+				"derr",
+				"derrotados_gimli_actual\tlong derrotados_gimli_actual"
+			],
+			[
+				"derrot",
+				"derrotados_legolas_actual\tlong derrotados_legolas_actual"
+			],
+			[
+				"top",
+				"tope_2\tint tope_2"
+			],
+			[
+				"t",
+				"tope_1\tint tope_1"
+			],
+			[
+				"nomb",
+				"nombre_largo\tbatalla_t nombre_largo"
+			],
+			[
+				"str",
+				"string.h\t/usr/include"
+			],
+			[
+				"i",
+				"inc\t#include <â€¦>"
+			],
+			[
+				"c",
+				"con_nombre_mas_corto\tbatalla_t con_nombre_mas_corto"
+			],
+			[
+				"bata",
+				"batalla_t\tbatalla_t"
+			],
+			[
+				"cas",
+				"casu\tcasa_t casu"
+			],
+			[
+				"pr",
+				"prueba"
+			],
+			[
+				"p",
+				"prueba"
+			],
+			[
+				"st",
+				"stdio.h\tstandard header"
+			],
+			[
+				"nuev",
+				"nuevo_nivel"
+			],
+			[
+				"niv",
+				"nuevo_nivel"
+			],
+			[
+				"nivel",
+				"nivel_actual"
+			],
+			[
+				"esta",
+				"esta_en_rango_manhattan"
+			],
+			[
+				"ENA",
+				"ENANO"
+			],
+			[
+				"puede",
+				"puede_agregar_elfos"
+			],
+			[
+				"pued",
+				"puede_agregar_enano"
+			],
+			[
+				"torres",
+				"torres_t"
+			],
+			[
+				"CAN",
+				"CANTIDAD_ENEMIGOS_NIVEL_1"
+			],
+			[
+				"mostra",
+				"mostrar_grafico"
+			],
+			[
+				"sys",
+				"system"
+			],
+			[
+				"posi",
+				"posicion_enemigo"
+			],
+			[
+				"ataq",
+				"ataquee"
+			],
+			[
+				"jueg",
+				"juego_perdido"
+			],
+			[
+				"qued",
+				"quedan"
+			],
+			[
+				"tope",
+				"tope_mapa"
+			],
+			[
+				"ult",
+				"ultimo_defensor_agregado"
+			],
+			[
+				"TOPE",
+				"TOPE"
+			],
+			[
+				"ce",
+				"cervezas"
+			],
+			[
+				"cer",
+				"cervezas_ordenadas"
+			],
+			[
+				"est",
+				"esta_ordenado_ascendentemente"
+			],
+			[
+				"pos",
+				"pos_actual"
+			],
+			[
+				"codi",
+				"codigo_ingrediente"
+			],
+			[
+				"ing",
+				"ingredientes"
+			],
+			[
+				"ec",
+				"encontrado"
+			],
+			[
+				"inge",
+				"ingrediente"
+			],
+			[
+				"ingr",
+				"ingredientes_necesarios"
+			],
+			[
+				"ingre",
+				"ingredientes_necesarios"
+			],
+			[
+				"ingredeinte",
+				"ingredientes"
+			],
+			[
+				"in",
+				"ingrediente_t"
+			],
+			[
+				"ingredi",
+				"ingrediente"
+			],
+			[
+				"res",
+				"resistencia_aerodinamica"
+			],
+			[
+				"fle",
+				"flecha"
+			],
+			[
+				"flecha",
+				"flecha_t"
+			],
+			[
+				"pensami",
+				"pensamiento_t"
+			],
+			[
+				"pensam",
+				"pensamiento_t"
+			],
+			[
+				"pens",
+				"pensamiento2"
+			],
+			[
+				"pensa",
+				"pensamiento1"
+			],
+			[
+				"pen",
+				"pensamiento1"
+			],
+			[
+				"dete",
+				"detener_el_tiempo"
+			],
+			[
+				"TAM",
+				"TAMANO_NIVEL_1"
+			],
+			[
+				"TAA",
+				"TAMANO_NIVEL_1"
+			],
+			[
+				"TAMA",
+				"TAMANO_NIVEL_1"
+			],
+			[
+				"cantidad_enemigos",
+				"cantidad_enemigos_por_defensor"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"isntall",
+				"Package Control: Install Package"
+			],
+			[
+				"package ins",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/luciano/Desktop/algo1/tp3/„‘Ô¿",
+		"/home/luciano/Desktop/algo1/tp3/commons.h",
+		"/home/luciano/Desktop/algo1/tp3/utiles.h",
+		"/home/luciano/Desktop/algo1/tp3/grabacion.dat",
+		"/home/luciano/.cache/.fr-wzCFHT/archivos_binarios_1.c",
+		"/home/luciano/Desktop/algo1/desafio/historial_batallas.h",
+		"/home/luciano/Desktop/algo1/desafio/desafio.c",
+		"/usr/include/stdio.h",
+		"/home/luciano/Desktop/algo1/desafio/desafio.sublime-project",
+		"/home/luciano/Desktop/algo1/desafio1/desafio.c",
+		"/home/luciano/Desktop/algo1/desafio1/.desafio.sublime-project",
+		"/home/luciano/Desktop/algo1/desafio1/desafio.sublime-project",
+		"/home/luciano/Desktop/algo1/desafio1/.sublime-project",
+		"/home/luciano/Desktop/algo1/tp2/animos.c",
+		"/home/luciano/Desktop/algo1/tp2/defendiendo_torres.c",
+		"/home/luciano/Desktop/algo1/tp2/juego.c",
+		"/home/luciano/Desktop/algo1/tp2/constantes.h",
+		"/home/luciano/Desktop/algo1/tp2/constantes.c",
+		"/home/luciano/Desktop/algo1/practica_parcial.c",
+		"/home/luciano/Desktop/tp2/juego.c",
+		"/home/luciano/Desktop/tp2/utiles.h",
+		"/home/luciano/Desktop/tp2/defendiendo_torres.c",
+		"/home/luciano/Desktop/tp2/constantes.h",
+		"/home/luciano/Desktop/tp2/animos.c",
+		"/home/luciano/Desktop/algo1/tp1/animos.c",
+		"/home/luciano/Desktop/algo1/tp2/animos.h",
+		"/home/luciano/Desktop/algo1/tp2/utiles.h",
+		"/home/luciano/Desktop/algo1/tp2/juego",
+		"/home/luciano/Desktop/algo1/tp1/animos.h",
+		"/home/luciano/Downloads/06_-_teorica_19-05-2020_aritmetica_(teorica)/aritmetica.h",
+		"/home/luciano/Downloads/06_-_teorica_19-05-2020_aritmetica_(teorica)/aritmetica.c",
+		"/home/luciano/Desktop/algo1/tp1/test_animos.c",
+		"/home/luciano/Desktop/algo1/tp1/influencers",
+		"/home/luciano/Desktop/algo1/tp1/influencers.c",
+		"/home/luciano/Desktop/algo1/rpl.c",
+		"/home/luciano/Desktop/algo1/rpltest.c",
+		"/home/luciano/Desktop/algo1/minijuegos/7ymedio.c",
+		"/home/luciano/Desktop/algo1/prueba.c"
+	],
+	"find":
+	{
+		"height": 24.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "juego.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

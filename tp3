@@ -1,0 +1,618 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <sys/ioctl.h> //para obtener dimension de la consola
+#include "commons.h"
+#include "juego.h"
+#include "utiles.h"
+#include "controller.h"
+
+#define FORMATO_NIVEL "NIVEL="
+#define FORMATO_CAMINO "CAMINO="
+
+
+void strapp(char string[MAX_ARGUMENTO], char new_char){
+	size_t len = strlen(string);
+    string[len] = new_char;
+    string[len+1] = '\0';
+}
+
+void cargar_valor_de_argumento(char valor[MAX_ARGUMENTO], const char* argumento){
+	char arg[MAX_ARGUMENTO];
+	strcpy(arg, argumento);
+	int i = (int)(strstr(argumento, "=") - argumento);
+	valor[0] = '\0';
+	while(arg[++i]){
+		strapp(valor, arg[i]);
+	}
+}
+
+
+FILE* abrir_archivo(const char* ruta, char* modo, char* mensaje_error){
+	FILE* archivo = fopen(ruta, modo);
+	if(!archivo){
+		printf("%s\n", mensaje_error);
+		exit(FAILURE);
+	}
+	return archivo;
+}
+
+void transformar_ruta_config_a_ranking(char ruta_config[MAX_RUTA], char ruta_ranking[MAX_RUTA]){
+	char ruta_config_aux[MAX_RUTA];
+	strcpy(ruta_config_aux, ruta_config);
+	ruta_config_aux[strlen(ruta_config) - 3] = '\0';
+	ruta_ranking[0] = '\0';
+	strcat(ruta_ranking, PRE_RUTA_RANKING);
+	strcat(ruta_ranking, ruta_config_aux);
+	strcat(ruta_ranking, EXTENSION_RANKING);
+}
+
+void ranking (int argc, char const *argv[]){
+	int i = 1, cant_listados = -1;
+	FILE* archivo_ranking = NULL;
+
+	while(++i < argc){
+		if(strstr(argv[i], LISTAR)){
+			char cantidad[MAX_ARGUMENTO];
+			cargar_valor_de_argumento(cantidad, argv[i]);
+			cant_listados = atoi(cantidad);
+
+		} else if(strstr(argv[i], CONFIG)){
+			char ruta_config[MAX_ARGUMENTO];
+			cargar_valor_de_argumento(ruta_config, argv[i]);
+			char ruta_ranking[MAX_RUTA];
+			transformar_ruta_config_a_ranking(ruta_config,ruta_ranking);
+			archivo_ranking = abrir_archivo(ruta_ranking, "r", SIN_RANKING_CONFIG_ERROR);
+		}
+	}
+
+	if(!archivo_ranking){
+		archivo_ranking = abrir_archivo(RANKING_DEFAULT, "r", SIN_RANKING_ERROR);
+	}
+
+	char nombre[MAX_ARGUMENTO], puntaje[MAX_ARGUMENTO];
+	int cantidad_lecturas = 0;
+
+	int cantidad_elementos_leidos = fscanf(archivo_ranking, FORMATO_RANKING, nombre, puntaje);
+
+	while(cantidad_elementos_leidos == ELEMENTOS_LINEA_RANKING && (cant_listados == -1 || cantidad_lecturas < cant_listados)){
+		printf("%i: %s con %s puntos.\n", ++cantidad_lecturas, nombre, puntaje);
+		cantidad_elementos_leidos = fscanf(archivo_ranking, FORMATO_RANKING, nombre, puntaje);
+	}
+
+	fclose(archivo_ranking);
+}
+void inicializar_camino(char* tablero[MAX_FILAS][MAX_COLUMNAS], int tope){
+	for(int i = 0; i < tope; i++){
+		for(int j = 0; j < tope; j++){
+			tablero[i][j] = TIERRA;
+		}
+	}
+}
+
+void imprimir_controles(){
+	char tabla[MAX_TEXTO];
+	size_t offset = OFFSET; // dado el uso de barritas se rompe un poco el formato y me vi obligado a usar este magic number como offset para que este alineado
+	struct winsize w;
+    ioctl(0, TIOCGWINSZ, &w);
+
+	sprintf(tabla, "║  Marcar camino: W-A-S-D  ║  Volver atras: CTRL + Z  ║  Maxima Longitud De Camino: %d  ║  ", MAX_CAMINO);
+	
+	//imprimo parte de arriba
+	printf("%*s", (int)(offset + (w.ws_col - strlen(tabla)) / 2), " ");
+	printf("╔");
+    for(int j = 0; j < strlen(tabla) - offset; j++){
+        printf("═");
+    }
+	printf("╗\n");
+
+	//imprimo texto
+	printf("%*s", (int)(offset + (w.ws_col - strlen(tabla)) / 2), " ");
+    printf("%s\n", tabla);
+
+    //imprimo parte de abajo
+	printf("%*s", (int)(offset + (w.ws_col - strlen(tabla)) / 2), " ");
+    printf("╚");
+    for(int j = 0; j < strlen(tabla) - offset; j++){
+        printf("═");
+    }
+    printf("╝");
+	
+}
+
+void imprimir_camino(coordenada_t camino[MAX_CAMINOS], int tope_camino, int tamanio_nivel){
+	char* terreno[MAX_FILAS][MAX_COLUMNAS];
+
+	inicializar_camino(terreno, tamanio_nivel);
+
+	for(int i = 0; i < tope_camino; i++){
+		coordenada_t pos_actual = camino[i];
+		terreno[pos_actual.fil][pos_actual.col] = " ";
+	}
+
+	struct winsize w;
+    ioctl(0, TIOCGWINSZ, &w);
+	for (int i = 0; i < (w.ws_row - tamanio_nivel) / 2; i++)
+        printf("\n");
+
+	imprimir_controles();
+	printf("\n\n");
+
+	for(int i = 0; i < tamanio_nivel; i++){
+		printf("%*s", (int)((w.ws_col - (tamanio_nivel * 3)) / 2), " ");
+		printf("%5i |", i);
+		for(int j = 0; j < tamanio_nivel; j++)
+				printf(" %s ", terreno[i][j]);
+		printf("\n");
+	}
+
+	printf("%*s", (int)((w.ws_col - (tamanio_nivel * 3)) / 2), " ");
+	printf("%7c", ' ');
+	for(int i = 0; i < tamanio_nivel * 3; i++)
+		printf("-");
+	printf("\n");
+
+	printf("%*s", (int)((w.ws_col - (tamanio_nivel * 3)) / 2), " ");
+	printf("%7c", ' ');
+	for(int i = 0; i < tamanio_nivel; i++){
+		if(i < 10)
+			printf("%2i ", i);
+		else	
+			printf("%3i", i);
+	}
+
+	for (int i = 0; i < (w.ws_row - tamanio_nivel) / 2; i++)
+        printf("\n");
+}
+
+bool camino_completado(coordenada_t pos_actual, int tamanio_nivel, int salida){
+	switch(salida){
+		case ESTE:  return pos_actual.col == tamanio_nivel - 1;
+		case OESTE: return pos_actual.col == 0;
+		case SUR:   return pos_actual.fil == tamanio_nivel - 1;
+		case NORTE: return pos_actual.fil == 0;
+		default: return false; 
+	}
+}
+
+void obtener_tecla_usuario(int* c){
+	system ("/bin/stty raw");
+	*c = getchar();
+	system ("/bin/stty cooked");
+}
+
+void pedir_ubicacion_entrada(const char* ubicacion_pedida, int* pos, int tamanio_nivel) {
+	c_print("eliga la %s en la que desea colocar la entrada (0 a %i): ", ubicacion_pedida, tamanio_nivel - 1);
+	scanf("%i", pos);
+
+	while(*pos < 0 || *pos >= tamanio_nivel){
+		printf("la %s debe estar en el rango solicitad (0 a %i): ", ubicacion_pedida, tamanio_nivel - 1);
+		scanf("%i", pos);
+	}
+}
+
+coordenada_t obtener_coordenada_entrada(int entrada, int tamanio_nivel){
+	coordenada_t coordenada_entrada;
+
+	switch(entrada){
+		case ESTE: {
+			coordenada_entrada.col = tamanio_nivel - 1;
+			pedir_ubicacion_entrada("fila", &(coordenada_entrada.fil), tamanio_nivel);
+			break;
+		}
+		case OESTE: {
+			coordenada_entrada.col = 0;
+			pedir_ubicacion_entrada("fila", &(coordenada_entrada.fil), tamanio_nivel);
+			break;
+		}
+		case NORTE: {
+			coordenada_entrada.fil = 0;
+			pedir_ubicacion_entrada("columna", &(coordenada_entrada.col), tamanio_nivel);
+			break;
+		}
+		case SUR: {
+			coordenada_entrada.fil = tamanio_nivel - 1;
+			pedir_ubicacion_entrada("columna", &(coordenada_entrada.col), tamanio_nivel);
+			break;
+		}
+		default: break;
+	}
+	return coordenada_entrada;
+}
+
+bool puede_hacer_movimiento(coordenada_t nueva_pos, int tope_camino, int tamanio_nivel){
+	bool puede_moverse = false;
+	if(tope_camino < MAX_CAMINO){
+		if(nueva_pos.col >= 0 && nueva_pos.col < tamanio_nivel){
+			if(nueva_pos.fil >= 0 && nueva_pos.fil < tamanio_nivel){
+				puede_moverse = true;
+			}
+		}
+	}
+
+	return puede_moverse;
+}
+
+void crear_camino_nivel(coordenada_t camino[MAX_CAMINOS], int* tope_camino, int entrada, int salida, int tamanio_nivel, int nivel_actual, int numero_camino){
+	int c = -1; // input del usuario
+	bool camino_terminado = false;
+	*tope_camino = 1;
+
+	imprimir_camino(camino, 0, tamanio_nivel);
+	c_print("CAMINO %i DE NIVEL %i \n", numero_camino, nivel_actual);
+	coordenada_t pos_actual = obtener_coordenada_entrada(entrada, tamanio_nivel);
+
+	while(c != CANCELAR && !camino_terminado){
+		camino[(*tope_camino) - 1] = pos_actual;
+		imprimir_camino(camino, *tope_camino, tamanio_nivel);
+		system ("/bin/stty raw");
+		c = getchar();
+		system ("/bin/stty cooked");
+		switch(c){
+			case ARRIBA: {
+				coordenada_t nueva_pos = (coordenada_t){pos_actual.fil - 1, pos_actual.col};
+				if(puede_hacer_movimiento(nueva_pos, *tope_camino, tamanio_nivel)){
+					pos_actual = nueva_pos;
+					(*tope_camino)++;
+				}
+				break;
+			}
+			case ABAJO: {
+				coordenada_t nueva_pos = (coordenada_t){pos_actual.fil + 1, pos_actual.col};
+				if(puede_hacer_movimiento(nueva_pos, *tope_camino, tamanio_nivel)){
+					pos_actual = nueva_pos;
+					(*tope_camino)++;
+				}
+				break;
+			}
+			case IZQUIERDA: {
+				coordenada_t nueva_pos = (coordenada_t){pos_actual.fil, pos_actual.col - 1};
+				if(puede_hacer_movimiento(nueva_pos, *tope_camino, tamanio_nivel)){
+					pos_actual = nueva_pos;
+					(*tope_camino)++;
+				}
+				break;
+			}
+			case DERECHA: {
+				coordenada_t nueva_pos = (coordenada_t){pos_actual.fil, pos_actual.col + 1};
+				if(puede_hacer_movimiento(nueva_pos, *tope_camino, tamanio_nivel)){
+					pos_actual = nueva_pos;
+					(*tope_camino)++;
+				}
+				break;
+			}
+			case DESHACER: {
+				if((*tope_camino) > 1){
+					(*tope_camino)--;
+					pos_actual = camino[(*tope_camino) - 1];
+				}
+			}
+		}
+		camino_terminado = camino_completado(pos_actual, tamanio_nivel, salida);
+	}
+
+	camino[(*tope_camino) - 1] = pos_actual;
+	imprimir_camino(camino, *tope_camino, tamanio_nivel);
+}
+
+void crear_caminos_nivel(caminos_t* caminos_nivel, int nivel_actual){
+	caminos_nivel -> tope_camino_1 = 0;
+	caminos_nivel -> tope_camino_2 = 0;
+
+	switch(nivel_actual){
+		case NIVEL_1: {
+				crear_camino_nivel(caminos_nivel -> camino_1, &(caminos_nivel -> tope_camino_1), ESTE, OESTE, TAMANO_NIVEL_1, nivel_actual, 1);
+				break;
+			}
+		case NIVEL_2: {
+				crear_camino_nivel(caminos_nivel -> camino_1,  &(caminos_nivel -> tope_camino_1), OESTE, ESTE, TAMANO_NIVEL_2, nivel_actual, 1);
+				break;
+			}
+		case NIVEL_3: {
+				crear_camino_nivel(caminos_nivel -> camino_1,  &(caminos_nivel -> tope_camino_1), NORTE, SUR, TAMANO_NIVEL_3, nivel_actual, 1);
+				crear_camino_nivel(caminos_nivel -> camino_2,  &(caminos_nivel -> tope_camino_2), NORTE, SUR, TAMANO_NIVEL_3, nivel_actual, 2);
+				break;
+			}
+		case NIVEL_4: {
+				crear_camino_nivel(caminos_nivel -> camino_1,  &(caminos_nivel -> tope_camino_1), SUR, NORTE, TAMANO_NIVEL_4, nivel_actual, 1);
+				crear_camino_nivel(caminos_nivel -> camino_2,  &(caminos_nivel -> tope_camino_2), SUR, NORTE, TAMANO_NIVEL_4, nivel_actual, 2);
+				break;
+			}
+		default: break;
+	}
+}
+
+void crear_camino(int argc, char const *argv[]){
+	FILE* archivo_caminos;
+	caminos_t caminos[MAX_NIVEL];
+	int nivel_actual = NIVEL_1;
+	int i = PRIMER_ARGUMENTO;
+	char ruta_caminos[MAX_RUTA];
+
+	if(i < argc){
+		strcpy(ruta_caminos, argv[i]);
+		while(nivel_actual <= MAX_NIVEL){
+			crear_caminos_nivel(&(caminos[nivel_actual - 1]), nivel_actual);
+			nivel_actual++;
+		}
+	} else {
+		printf(FALTA_ARG_OBLIGATORIO("nombre del camino"));
+	}
+
+	archivo_caminos = abrir_archivo(ruta_caminos, "w", ACCESO_DENEGADO(ruta_caminos));
+
+	for(int i = 0; i < MAX_NIVEL; i++){
+		fprintf(archivo_caminos, FORMATO_NIVEL "%i\n", i + 1);
+		fprintf(archivo_caminos, FORMATO_CAMINO "%i\n", 1);
+
+		for(int j = 0; j < caminos[i].tope_camino_1; j++){
+			fprintf(archivo_caminos, "%i;%i\n", caminos[i].camino_1[j].fil, caminos[i].camino_1[j].col);
+		}
+
+		if(caminos[i].tope_camino_2 > 0) {
+			fprintf(archivo_caminos, FORMATO_CAMINO "%i\n", 2);
+			for(int j = 0; j < caminos[i].tope_camino_2; j++){
+				fprintf(archivo_caminos, "%i;%i\n", caminos[i].camino_2[j].fil, caminos[i].camino_2[j].col);
+			}
+		}
+	}
+
+	fclose(archivo_caminos);
+}
+
+
+void guardar_csv_en_config(FILE* archivo, configuracion_t* config){
+	int hay_config;
+	char argumento[MAX_ARGUMENTO];
+	while((hay_config = fscanf(archivo, "%[^=]=", argumento)) > 0){
+		if(strcmp(argumento, CONFIG_PARAM_RESISTENCIA_TORRES) == 0){
+			fscanf(archivo, "%i,%i\n", &(config -> resistencia_torre_1), &(config -> resistencia_torre_2));
+		} else if(strcmp(argumento, CONFIG_PARAM_ENANOS_INICIO) == 0) {
+			for(int i = NIVEL_1; i <= MAX_NIVEL; i++){
+				fscanf(archivo, "%i", &(config -> enanos_inicio[i-1]));
+				if(i < MAX_NIVEL)
+					fscanf(archivo, ",");
+			}
+			fscanf(archivo, "\n");
+		} else if(strcmp(argumento, CONFIG_PARAM_ELFOS_INICIO) == 0) {
+			for(int i = NIVEL_1; i <= MAX_NIVEL; i++){
+				fscanf(archivo, "%i", &(config -> elfos_inicio[i-1]));
+				if(i < MAX_NIVEL)
+					fscanf(archivo, ",");
+			}
+			fscanf(archivo, "\n");
+		} else if(strcmp(argumento, CONFIG_PARAM_ENANOS_EXTRA) == 0){
+			fscanf(archivo, "%i,%i,%i\n", &(config -> enanos_extra), &(config -> costo_torre_1_enano), &(config -> costo_torre_2_enano));
+		} else if(strcmp(argumento, CONFIG_PARAM_ELFOS_EXTRA) == 0){
+			fscanf(archivo, "%i,%i,%i\n", &(config -> elfos_extra), &(config -> costo_torre_1_elfo), &(config -> costo_torre_2_elfo));
+		} else if(strcmp(argumento, CONFIG_PARAM_ENANOS_ANIMO) == 0){
+			fscanf(archivo, "%i,%i\n", &(config -> fallo_enanos), &(config -> critico_enanos));
+		} else if(strcmp(argumento, CONFIG_PARAM_ELFOS_ANIMO) == 0){
+			fscanf(archivo, "%i,%i\n", &(config -> fallo_elfos), &(config -> critico_elfos));
+		} else if(strcmp(argumento, CONFIG_PARAM_VELOCIDAD) == 0){
+			fscanf(archivo, "%f\n", &(config -> velocidad));
+		} else if(strcmp(argumento, CONFIG_PARAM_CAMINOS) == 0){
+			fscanf(archivo, "%s\n", config -> ruta_caminos);
+		} 
+	}
+}
+
+void obtener_valor_config_opcional_entero(int* valor, int min, int max, bool (*validador)(char*, int min, int max)){
+    printf(" (%i a %i): ", min, max);
+	char input[MAX_ARGUMENTO];
+    fgets(input, MAX_ARGUMENTO, stdin);
+    if(strlen(input) == 1 && input[0] == '\n'){
+        *valor = -1;
+    } else {
+    	while(!validador(input, min, max)){
+    		printf("Asegurate que el valor sea numero entero y este entre %i y %i: ", min, max);
+    		fgets(input, MAX_ARGUMENTO, stdin);
+    	}
+        	*valor = atoi(input);
+    }
+    printf("\n");
+}
+
+void obtener_valor_config_opcional_float(float* valor, float min, float max, bool (*validador)(char*, int min, int max)){
+	printf(" (%f a %f): ", min, max);
+	char input[MAX_ARGUMENTO];
+    fgets(input, MAX_ARGUMENTO, stdin);
+    if(strlen(input) == 1 && input[0] == '\n'){
+        *valor = -1;
+    } else {
+    	while(!validador(input, (int)min, (int)max)){
+    		printf("Asegurate que el valor sea numero entre %f y %f: ", min, max);
+    		fgets(input, MAX_ARGUMENTO, stdin);
+    	}
+        *valor = (float)atof(input);
+    }
+    printf("\n");
+}
+
+void obtener_valor_config_opcional_string(char valor[MAX_ARGUMENTO], bool (*validador)(char*)){
+	char input[MAX_ARGUMENTO];
+    fgets(input, MAX_ARGUMENTO, stdin);
+    if(strlen(input) == 1 && input[0] == '\n'){
+        strcpy(valor, "-1");
+    } else {
+    	while(!validador(input)){
+    		printf("Asegurate de ingresar una ruta válida: ");
+    		fgets(input, MAX_ARGUMENTO, stdin);
+    	}
+        strcpy(valor, input);
+    }
+    printf("\n");
+}
+
+bool validador_numerico(char* input, int min, int max){
+	bool es_numero = true;
+
+	for(int i = 0; i < strlen(input) - 1; i++){
+		es_numero = es_numero && isxdigit(input[i]);
+	}
+
+	return es_numero && atoi(input) >= min && atoi(input) <= max;
+}
+
+bool validador_ruta_config(char* input){
+	return strlen(input) >= 1 && strlen(input) <= MAX_RUTA && !strchr(input, ' ') && strstr(input, "." EXTENSION_CONFIG);
+}
+
+void crear_configuracion(int argc, char const *argv[]){
+	FILE* archivo_config;
+	configuracion_t config;
+	int i = PRIMER_ARGUMENTO;
+
+	if(i < argc){
+		printf("Creación de configuración (si queres dejar el valor por default, solo presioná enter):\n");
+		printf("%s", "Ingrese los puntos de vida de la torre 1");
+		obtener_valor_config_opcional_entero(&(config.resistencia_torre_1), 1, MAX_VIDA_TORRE, validador_numerico);
+		printf("%s", "Ingrese los puntos de vida de la torre 2");
+		obtener_valor_config_opcional_entero(&(config.resistencia_torre_2), 1, MAX_VIDA_TORRE, validador_numerico);
+		for(int i = NIVEL_1; i <= MAX_NIVEL; i++){
+			printf("%s %i", "Ingrese la cantidad de enanos en el nivel ", i);
+			obtener_valor_config_opcional_entero(&(config.enanos_inicio[i]), 0, MAX_DEFENSORES_INICIALES, validador_numerico);
+			printf("%s %i", "Ingrese la cantidad de elfos en el nivel ", i);
+			obtener_valor_config_opcional_entero(&(config.elfos_inicio[i]), 0, MAX_DEFENSORES_INICIALES, validador_numerico);
+		}
+		printf("%s", "Ingrese la cantidad de enanos extra");
+		obtener_valor_config_opcional_entero(&(config.enanos_extra), 0, MAX_DEFENSORES_EXTRAS, validador_numerico);
+		printf("%s", "Ingrese cuanta resistencia le costara agregar un enano a la torre 1");
+		obtener_valor_config_opcional_entero(&(config.costo_torre_1_enano), 0, MAX_COSTO_TORRE_POR_DEFENSOR,  validador_numerico);
+		printf("%s", "Ingrese cuanta resistencia le costara agregar un enano a la torre 2");
+		obtener_valor_config_opcional_entero(&(config.costo_torre_2_enano), 0, MAX_COSTO_TORRE_POR_DEFENSOR, validador_numerico);
+		printf("%s", "Ingrese la cantidad de elfos extra");
+		obtener_valor_config_opcional_entero(&(config.elfos_extra), 0, MAX_DEFENSORES_EXTRAS, validador_numerico);
+		printf("%s", "Ingrese cuanta resistencia le costara agregar un elfo a la torre 1");
+		obtener_valor_config_opcional_entero(&(config.costo_torre_1_elfo), 0, MAX_COSTO_TORRE_POR_DEFENSOR, validador_numerico);
+		printf("%s", "Ingrese cuanta resistencia le costara agregar un elfo a la torre 2");
+		obtener_valor_config_opcional_entero(&(config.costo_torre_2_elfo), 0, MAX_COSTO_TORRE_POR_DEFENSOR, validador_numerico);
+		printf("%s", "Ingrese el daño crítico de los enanos");
+		obtener_valor_config_opcional_entero(&(config.critico_enanos), 0, MAX_CRITICO, validador_numerico);
+		printf("%s", "Ingrese el daño crítico de los elfos");
+		obtener_valor_config_opcional_entero(&(config.critico_elfos), 0, MAX_CRITICO, validador_numerico);
+		printf("%s", "Ingrese el fallo de los enanos");
+		obtener_valor_config_opcional_entero(&(config.fallo_enanos), 0, MAX_FALLO, validador_numerico);
+		printf("%s", "Ingrese el fallo de los elfos");
+		obtener_valor_config_opcional_entero(&(config.fallo_elfos), 0, MAX_FALLO, validador_numerico);
+		printf("%s", "Ingrese la velocidad del juego");
+		obtener_valor_config_opcional_float(&(config.velocidad), 0, MAX_VELOCIDAD, validador_numerico);
+		printf("%s", "Ingrese la ruta del archivo de caminos: ");
+		obtener_valor_config_opcional_string(config.ruta_caminos, validador_ruta_config);
+	} else {
+		printf(FALTA_ARG_OBLIGATORIO("nombre del nuevo archivo configuracion"));
+	}
+
+	archivo_config = abrir_archivo(argv[i], "w", ACCESO_DENEGADO(argv[i]));
+	fprintf(archivo_config, CONFIG_PARAM_RESISTENCIA_TORRES "=%i,%i\n", config.resistencia_torre_1, config.resistencia_torre_2);
+	fprintf(archivo_config, CONFIG_PARAM_ENANOS_INICIO " =");
+	for(int i = NIVEL_1; i <= MAX_NIVEL; i++){
+		fprintf(archivo_config, "%i", config.enanos_inicio[i]);
+		if(i < MAX_NIVEL)
+			fprintf(archivo_config, ",");
+	}
+	fprintf(archivo_config, "\n");
+	fprintf(archivo_config, CONFIG_PARAM_ELFOS_INICIO " =");
+	for(int i = NIVEL_1; i <= MAX_NIVEL; i++){
+		fprintf(archivo_config, "%i", config.elfos_inicio[i]);
+		if(i < MAX_NIVEL)
+			fprintf(archivo_config, ",");
+	}
+	fprintf(archivo_config, "\n");
+	fprintf(archivo_config, CONFIG_PARAM_ENANOS_EXTRA "=%i,%i,%i\n", config.enanos_extra, config.costo_torre_1_enano, config.costo_torre_2_enano);
+	fprintf(archivo_config, CONFIG_PARAM_ELFOS_EXTRA "=%i,%i,%i\n", config.elfos_extra, config.costo_torre_1_elfo, config.costo_torre_2_elfo);
+	fprintf(archivo_config, CONFIG_PARAM_ENANOS_ANIMO "=%i,%i\n", config.fallo_enanos, config.critico_enanos);
+	fprintf(archivo_config, CONFIG_PARAM_ELFOS_ANIMO"=%i,%i\n", config.fallo_elfos, config.critico_elfos);
+	fprintf(archivo_config, CONFIG_PARAM_VELOCIDAD "=%.1f\n", config.velocidad);
+	fprintf(archivo_config, CONFIG_PARAM_CAMINOS "=%s\n", config.ruta_caminos);
+	fclose(archivo_config);
+}
+
+void poneme_la_repe(int argc, char const *argv[]){
+	juego_t juego;
+	FILE* archivo_grabacion;
+	float velocidad = VELOCIDAD_DEFAULT;
+
+	int i = PRIMER_ARGUMENTO;
+	while(i < argc){
+		if(strstr(argv[i], VELOCIDAD)){
+			char arg[MAX_ARGUMENTO];
+			cargar_valor_de_argumento(arg, argv[i]);
+			velocidad = (float)atof(arg);
+		} else if(strstr(argv[i], GRABACION)){
+			char ruta[MAX_ARGUMENTO];
+			cargar_valor_de_argumento(ruta, argv[i]);
+			archivo_grabacion = abrir_archivo(ruta, "r", SIN_GRABACION_ERROR);
+		} 
+		i++;
+	}
+
+	if(!archivo_grabacion) {
+		printf(FALTA_ARG_OBLIGATORIO("grabacion"));
+		exit(FAILURE);
+	}
+
+	fread(&juego, sizeof(juego_t), 1, archivo_grabacion);
+	while(!feof(archivo_grabacion)){
+		mostrar_juego(juego);
+		detener_el_tiempo(velocidad);
+		fread(&juego, sizeof(juego_t), 1, archivo_grabacion);
+	}
+
+	fclose(archivo_grabacion);
+}
+
+
+void jugar(int argc, char const *argv[]){
+	int i = PRIMER_ARGUMENTO;
+	char ruta_grabacion[MAX_RUTA] = REPE_DEFAULT;
+	char ruta_config[MAX_ARGUMENTO] = CONFIG_DEFAULT;
+	configuracion_t config;
+	FILE *archivo_config = NULL;
+
+	while(i < argc){
+	 	if(strstr(argv[i], CONFIG)){
+			cargar_valor_de_argumento(ruta_config, argv[i]);
+			archivo_config = abrir_archivo(ruta_config, "r", SIN_CONFIG_ERROR);
+			guardar_csv_en_config(archivo_config, &config);
+			fclose(archivo_config);
+		} else if(strstr(argv[i], GRABACION)){
+			cargar_valor_de_argumento(ruta_grabacion, argv[i]);
+		}
+		i++;
+	}
+
+	if(!archivo_config){
+		archivo_config = abrir_archivo(ruta_config, "r", SIN_CONFIG_ERROR);
+		guardar_csv_en_config(archivo_config, &config);
+		fclose(archivo_config);
+	}
+	char ruta_ranking[MAX_RUTA];
+	transformar_ruta_config_a_ranking(ruta_config,ruta_ranking);
+	juego(config, ruta_ranking, ruta_grabacion);
+}
+
+void manual(){
+	printf("Mostrar acciones posibles");
+}
+
+int main(int argc, char const *argv[]){
+	if(argc == 1){
+		manual();
+	} else {
+		if(strcmp(argv[1], JUGAR) == 0) {
+			jugar(argc ,argv);
+		} else if(strcmp(argv[1], RANKING) == 0){
+			ranking(argc, argv);
+		} else if(strcmp(argv[1], CREAR_CAMINO) == 0){
+			crear_camino(argc, argv);
+		} else if(strcmp(argv[1], REPE) == 0){
+			poneme_la_repe(argc, argv);
+		} else if(strcmp(argv[1], CREAR_CONFIG) == 0){
+			crear_configuracion(argc, argv);
+		}
+	}
+	exit(SUCCESS);
+}
