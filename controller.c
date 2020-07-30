@@ -3,10 +3,6 @@
 #include <string.h>
 #include "servicio_configuracion.h"
 
-void manual(){
-	
-}
-
 int main(int argc, const char *argv[]){
 	if(argc == 1){
 		printf("Se requiere un comando a ejecutar.\n");
