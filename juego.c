@@ -510,32 +510,32 @@ int puntaje(juego_t juego, configuracion_t configuracion){
 		   (configuracion.elfos_extra == DEFAULT_NUM ? ELFOS_TORRE : configuracion.elfos_extra));
 	}
 
-int juego(configuracion_t configuracion, char* ruta_ranking, char* ruta_grabacion) {
+int juego(configuracion_t configuracion_juego, char* ruta_ranking, char* ruta_grabacion) {
 
 	srand((unsigned)time(NULL));
 	FILE* grabacion;
 	int vel_viento, humedad;
 	char animo_gimli, animo_legolas;
-	animos(&vel_viento, &humedad, &animo_legolas, &animo_gimli, configuracion);
+	animos(&vel_viento, &humedad, &animo_legolas, &animo_gimli, configuracion_juego);
 	juego_t juego;
 	system("clear");
 	grabacion = abrir_archivo(ruta_grabacion, "w", ACCESO_DENEGADO(ruta_grabacion));
-	setear_defensores_iniciales(configuracion);
+	setear_defensores_iniciales(configuracion_juego);
 
 	caminos_t caminos[MAX_NIVEL];
-	inicializar_caminos(caminos, configuracion.ruta_caminos);
+	inicializar_caminos(caminos, configuracion_juego.ruta_caminos);
 
-		inicializar_juego(&juego, vel_viento, humedad, animo_legolas, animo_gimli, configuracion);
+		inicializar_juego(&juego, vel_viento, humedad, animo_legolas, animo_gimli, configuracion_juego);
 		inicializar_nivel(&(juego.nivel), juego.nivel_actual, caminos);
 		while(estado_juego(juego) == JUGANDO){
 			mostrar_juego(juego);
 			agregar_defensores_iniciales(&juego);
 			while(estado_nivel(juego.nivel) == JUGANDO && estado_juego(juego) == JUGANDO){
-				agregado_de_defensores_extra(&juego, configuracion);
+				agregado_de_defensores_extra(&juego, configuracion_juego);
 				jugar_turno(&juego);
 				mostrar_juego(juego);
 				fwrite(&juego, sizeof(juego_t), 1, grabacion);
-				detener_el_tiempo(configuracion.velocidad == DEFAULT_NUM ? VELOCIDAD_DEFAULT : configuracion.velocidad);
+				detener_el_tiempo(configuracion_juego.velocidad == DEFAULT_NUM ? VELOCIDAD_DEFAULT : configuracion_juego.velocidad);
 			}
 			if(estado_juego(juego) == JUGANDO && estado_nivel(juego.nivel) == VICTORIA){
 				c_print("Genial! Mataste a todos los enemigos. Proximo nivel: %d.\n", ++juego.nivel_actual);
@@ -548,7 +548,7 @@ int juego(configuracion_t configuracion, char* ruta_ranking, char* ruta_grabacio
 		} else if (estado_juego(juego) == VICTORIA){
 			c_print("Felicidades! Lograste defender a las torres de todos los orcos!\n\n");
 		}
-		int puntos = puntaje(juego, configuracion);
+		int puntos = puntaje(juego, configuracion_juego);
 		c_print("Tu puntaje es de %i.\n", puntos);
 		if(jugador_toma_decision("¿Queres guardar tu puntaje en el ranking?")){
 			guardar_puntaje(juego, ruta_ranking, puntos);
