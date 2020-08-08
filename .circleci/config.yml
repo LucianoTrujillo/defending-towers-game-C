@@ -3,7 +3,7 @@ jobs:
   build:
     # pre-built images: https://circleci.com/docs/2.0/circleci-images/
     docker:
-      - image: cgcc:4.9
+      - image: gcc:4.9
     steps:
       - checkout
       - run:
