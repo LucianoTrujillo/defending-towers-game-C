@@ -7,12 +7,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: The First Step
+          name: Build
           command: |
-            echo 'Hello World!'
-            echo 'This is the delivery pipeline'
+            gcc *.c utiles.o -o defendiendo -std=c99 -Wconversion
       - run:
-          name: Code Has Arrived
+          name: Test
           command: |
-            ls -al
-            echo '^^^That should look familiar^^^'
+            cd tests
+            gcc tests.c -o tests
+            ./tests
