@@ -29,7 +29,7 @@
 #define TORRE "T"
 #define ENTRADA "E"
 
-#define VELOCIDAD_DEFAULT (float)0.1
+#define VELOCIDAD_DEFAULT (float)0.02
 #define DEFAULT_STRING "-1"
 #define DEFAULT_NUM -1
 

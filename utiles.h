@@ -1,5 +1,6 @@
 #ifndef UTILES_H
 #define UTILES_H
+#include "commons.h"
 
 /*
  * Generará un camino aleatorio desde la entrada hasta la torre.

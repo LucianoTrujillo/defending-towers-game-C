@@ -63,7 +63,7 @@ void c_print(char *fmt, ...){
 	va_start(ap, fmt);
 	struct winsize w; 
     ioctl(0, TIOCGWINSZ, &w);  
-	printf("%*s> ", ((w.ws_col - strlen(fmt)) / 2), " ");
+	printf("%*s> ", (int)((w.ws_col - strlen(fmt)) / 2), " ");
 	for (p = fmt; *p; p++) {
 		if (*p != '%') {
 			putchar(*p);
@@ -71,7 +71,7 @@ void c_print(char *fmt, ...){
 			if(*p == ',' || *p == '.' || *p == '!' || *p == '?'){
 				detener_el_tiempo(0.03f);
 			} else {
-				detener_el_tiempo(0.03f);
+				detener_el_tiempo(0.01f);
 			}
 			continue;
 		}
@@ -97,7 +97,7 @@ void c_print(char *fmt, ...){
 				break;
 		}
 	}
-	detener_el_tiempo(0.03f);
+	detener_el_tiempo(0.01f);
 }
 
 /*
@@ -143,8 +143,8 @@ static config_nivel_t config_nivel_1 = {
 	.danio_a_torre_elfo = DANIO_A_TORRE_POR_ELFO,
 	.cantidad_caminos = 1,
 	.cantidad_enemigos_por_defensor = CANTIDAD_ENEMIGOS_POR_DEFENSOR_NIVEL_1,
-	.entrada_camino_1 =  (coordenada_t){TAMANO_NIVEL_1 / 2, TAMANO_NIVEL_1 - 1},
-	.posicion_torre_1 = (coordenada_t){TAMANO_NIVEL_1 / 2, 0},
+	.entrada_camino_1 =  {6, 14},
+	.posicion_torre_1 = {TAMANO_NIVEL_1 / 2, 0},
 };
 
 static config_nivel_t config_nivel_2 = {
@@ -156,8 +156,8 @@ static config_nivel_t config_nivel_2 = {
 	.danio_a_torre_elfo = DANIO_A_TORRE_POR_ELFO,
 	.cantidad_caminos = 1,
 	.cantidad_enemigos_por_defensor = CANTIDAD_ENEMIGOS_POR_DEFENSOR_NIVEL_2,
-	.entrada_camino_1 =  (coordenada_t){TAMANO_NIVEL_2 / 2, 0},
-	.posicion_torre_1 = (coordenada_t){TAMANO_NIVEL_2 / 2, TAMANO_NIVEL_2 - 1},
+	.entrada_camino_1 =  {TAMANO_NIVEL_2 / 2, 0},
+	.posicion_torre_1 = {TAMANO_NIVEL_2 / 2, TAMANO_NIVEL_2 - 1},
 };
 
 static config_nivel_t config_nivel_3 = {
@@ -169,10 +169,10 @@ static config_nivel_t config_nivel_3 = {
 	.danio_a_torre_enano = DANIO_A_TORRE_POR_ENANO,
 	.danio_a_torre_elfo = DANIO_A_TORRE_POR_ELFO,
 	.cantidad_caminos = 2,
-	.entrada_camino_1 =  (coordenada_t){0, 5},
-	.posicion_torre_1 = (coordenada_t){TAMANO_NIVEL_3 - 1, TAMANO_NIVEL_3 * 2 / 3},
-	.entrada_camino_2 =  (coordenada_t){0, 15},
-	.posicion_torre_2 = (coordenada_t){TAMANO_NIVEL_3 - 1, TAMANO_NIVEL_3 / 3},
+	.entrada_camino_1 =  {0, 5},
+	.posicion_torre_1 = {TAMANO_NIVEL_3 - 1, TAMANO_NIVEL_3 * 2 / 3},
+	.entrada_camino_2 =  {0, 15},
+	.posicion_torre_2 = {TAMANO_NIVEL_3 - 1, TAMANO_NIVEL_3 / 3},
 };
 static config_nivel_t config_nivel_4 = {
 	.tamanio_tablero = TAMANO_NIVEL_4,
@@ -183,10 +183,10 @@ static config_nivel_t config_nivel_4 = {
 	.danio_a_torre_elfo = DANIO_A_TORRE_POR_ELFO,
 	.cantidad_caminos = 2,
 	.cantidad_enemigos_por_defensor = CANTIDAD_ENEMIGOS_POR_DEFENSOR_NIVEL_4,
-	.entrada_camino_1 =  (coordenada_t){TAMANO_NIVEL_4 - 1,  TAMANO_NIVEL_4 * 2 / 3},
-	.posicion_torre_1 = (coordenada_t){0,  TAMANO_NIVEL_4 * 2 / 3},
-	.entrada_camino_2 =  (coordenada_t){TAMANO_NIVEL_4 - 1, TAMANO_NIVEL_4 / 3},
-	.posicion_torre_2 = (coordenada_t){0, TAMANO_NIVEL_4 / 3},
+	.entrada_camino_1 =  {TAMANO_NIVEL_4 - 1,  TAMANO_NIVEL_4 * 2 / 3},
+	.posicion_torre_1 = {0,  TAMANO_NIVEL_4 * 2 / 3},
+	.entrada_camino_2 =  {TAMANO_NIVEL_4 - 1, TAMANO_NIVEL_4 / 3},
+	.posicion_torre_2 = {0, TAMANO_NIVEL_4 / 3},
 };
 
 /*
